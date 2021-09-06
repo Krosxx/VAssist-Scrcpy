@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 30
+
+    defaultConfig {
+        applicationId "cn.vove7.scrcpy"
+        minSdk 21
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name.startsWith("assembleRelease")) {
+            task.doLast {
+                android.applicationVariants.all { variant ->
+                    File outputPath = new File(project.rootDir, "../../StudioProjects/p/VAssistant/jadb/src/main/assets/adb")
+                    if (variant.outputs[0].outputFile.name.contains("release")) {
+                        println("copy ${variant.outputs[0].outputFile} to ${outputPath.absolutePath}")
+                        copy {
+                            from variant.outputs[0].outputFile
+                            into outputPath
+                            rename {
+                                "scrcpy"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.annotation:annotation:1.2.0'
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation('com.google.code.gson:gson:2.8.8')
+    implementation project(":common")
+    debugImplementation project(":debug-ui")
+}
