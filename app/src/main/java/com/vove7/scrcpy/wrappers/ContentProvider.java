@@ -79,8 +79,8 @@ public class ContentProvider implements Closeable {
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (attributionSource == null) {
             Class<?> cl = Class.forName("android.content.AttributionSource$Builder");
-            Object builder = cl.getConstructor(int.class).newInstance(ServiceManager.USER_ID);
-            cl.getDeclaredMethod("setPackageName", String.class).invoke(builder, ServiceManager.PACKAGE_NAME);
+            Object builder = cl.getConstructor(int.class).newInstance(ServiceManagerWrapper.USER_ID);
+            cl.getDeclaredMethod("setPackageName", String.class).invoke(builder, ServiceManagerWrapper.PACKAGE_NAME);
             attributionSource = cl.getDeclaredMethod("build").invoke(builder);
         }
 
@@ -96,13 +96,13 @@ public class ContentProvider implements Closeable {
                     args = new Object[]{getAttributionSource(), "settings", callMethod, arg, extras};
                     break;
                 case 1:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, null, "settings", callMethod, arg, extras};
+                    args = new Object[]{ServiceManagerWrapper.PACKAGE_NAME, null, "settings", callMethod, arg, extras};
                     break;
                 case 2:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, "settings", callMethod, arg, extras};
+                    args = new Object[]{ServiceManagerWrapper.PACKAGE_NAME, "settings", callMethod, arg, extras};
                     break;
                 default:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, callMethod, arg, extras};
+                    args = new Object[]{ServiceManagerWrapper.PACKAGE_NAME, callMethod, arg, extras};
                     break;
             }
             return (Bundle) method.invoke(provider, args);
@@ -145,7 +145,7 @@ public class ContentProvider implements Closeable {
     public String getValue(String table, String key) {
         String method = getGetMethod(table);
         Bundle arg = new Bundle();
-        arg.putInt(CALL_METHOD_USER_KEY, ServiceManager.USER_ID);
+        arg.putInt(CALL_METHOD_USER_KEY, ServiceManagerWrapper.USER_ID);
         Bundle bundle = call(method, key, arg);
         if (bundle == null) {
             return null;
@@ -156,7 +156,7 @@ public class ContentProvider implements Closeable {
     public void putValue(String table, String key, String value) {
         String method = getPutMethod(table);
         Bundle arg = new Bundle();
-        arg.putInt(CALL_METHOD_USER_KEY, ServiceManager.USER_ID);
+        arg.putInt(CALL_METHOD_USER_KEY, ServiceManagerWrapper.USER_ID);
         arg.putString(NAME_VALUE_TABLE_VALUE, value);
         call(method, key, arg);
     }

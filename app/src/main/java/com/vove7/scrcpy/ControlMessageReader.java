@@ -39,7 +39,6 @@ public class ControlMessageReader implements Runnable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         onClose.run();
     }

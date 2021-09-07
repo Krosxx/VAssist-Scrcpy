@@ -10,3 +10,4 @@ rootProject.name = "ScrcpyLib"
 include ':app'
 include ':common'
 include ':debug-ui'
+include ':sys-api'

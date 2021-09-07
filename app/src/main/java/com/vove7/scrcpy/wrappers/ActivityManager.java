@@ -48,10 +48,10 @@ public class ActivityManager {
             Object[] args;
             if (getContentProviderExternalMethodNewVersion) {
                 // new version
-                args = new Object[]{name, ServiceManager.USER_ID, token, null};
+                args = new Object[]{name, ServiceManagerWrapper.USER_ID, token, null};
             } else {
                 // old version
-                args = new Object[]{name, ServiceManager.USER_ID, token};
+                args = new Object[]{name, ServiceManagerWrapper.USER_ID, token};
             }
             // ContentProviderHolder providerHolder = getContentProviderExternal(...);
             Object providerHolder = method.invoke(manager, args);

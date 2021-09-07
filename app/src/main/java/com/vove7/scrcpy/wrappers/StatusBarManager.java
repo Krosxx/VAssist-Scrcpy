@@ -7,23 +7,16 @@ import android.os.IInterface;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class StatusBarManager {
+public class StatusBarManager extends IManager {
 
     private final IInterface manager;
-    private Method expandNotificationsPanelMethod;
     private Method expandSettingsPanelMethod;
     private boolean expandSettingsPanelMethodNewVersion = true;
     private Method collapsePanelsMethod;
 
     public StatusBarManager(IInterface manager) {
+        super(manager);
         this.manager = manager;
-    }
-
-    private Method getExpandNotificationsPanelMethod() throws NoSuchMethodException {
-        if (expandNotificationsPanelMethod == null) {
-            expandNotificationsPanelMethod = manager.getClass().getMethod("expandNotificationsPanel");
-        }
-        return expandNotificationsPanelMethod;
     }
 
     private Method getExpandSettingsPanel() throws NoSuchMethodException {
@@ -49,7 +42,7 @@ public class StatusBarManager {
 
     public void expandNotificationsPanel() {
         try {
-            Method method = getExpandNotificationsPanelMethod();
+            Method method = getMethod("expandNotificationsPanel");
             method.invoke(manager);
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             Ln.e("Could not invoke method", e);
@@ -79,4 +72,15 @@ public class StatusBarManager {
             Ln.e("Could not invoke method", e);
         }
     }
+
+    public boolean toggleRecentApps() {
+        try {
+            getMethod("toggleRecentApps").invoke(manager);
+            return true;
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

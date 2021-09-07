@@ -44,17 +44,17 @@ public class ClipboardManager {
 
     private static ClipData getPrimaryClip(Method method, IInterface manager) throws InvocationTargetException, IllegalAccessException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return (ClipData) method.invoke(manager, ServiceManager.PACKAGE_NAME);
+            return (ClipData) method.invoke(manager, ServiceManagerWrapper.PACKAGE_NAME);
         }
-        return (ClipData) method.invoke(manager, ServiceManager.PACKAGE_NAME, ServiceManager.USER_ID);
+        return (ClipData) method.invoke(manager, ServiceManagerWrapper.PACKAGE_NAME, ServiceManagerWrapper.USER_ID);
     }
 
     private static void setPrimaryClip(Method method, IInterface manager, ClipData clipData)
             throws InvocationTargetException, IllegalAccessException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            method.invoke(manager, clipData, ServiceManager.PACKAGE_NAME);
+            method.invoke(manager, clipData, ServiceManagerWrapper.PACKAGE_NAME);
         } else {
-            method.invoke(manager, clipData, ServiceManager.PACKAGE_NAME, ServiceManager.USER_ID);
+            method.invoke(manager, clipData, ServiceManagerWrapper.PACKAGE_NAME, ServiceManagerWrapper.USER_ID);
         }
     }
 
@@ -87,9 +87,9 @@ public class ClipboardManager {
     private static void addPrimaryClipChangedListener(Method method, IInterface manager, IOnPrimaryClipChangedListener listener)
             throws InvocationTargetException, IllegalAccessException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            method.invoke(manager, listener, ServiceManager.PACKAGE_NAME);
+            method.invoke(manager, listener, ServiceManagerWrapper.PACKAGE_NAME);
         } else {
-            method.invoke(manager, listener, ServiceManager.PACKAGE_NAME, ServiceManager.USER_ID);
+            method.invoke(manager, listener, ServiceManagerWrapper.PACKAGE_NAME, ServiceManagerWrapper.USER_ID);
         }
     }
 

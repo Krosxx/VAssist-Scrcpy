@@ -27,6 +27,7 @@ public final class ControlMessage {
     public static final int TYPE_ROTATE_DEVICE = 11;
     public static final int TYPE_SET_POWER_SAVE_MODE = 12;
     public static final int TYPE_SIMPLE_GESTURE = 13;
+    public static final int TYPE_PERFORM_ACS_ACTION = 14;
 
     private int type;
     private String text;
@@ -116,6 +117,13 @@ public final class ControlMessage {
         ControlMessage msg = new ControlMessage();
         msg.type = TYPE_SET_POWER_SAVE_MODE;
         msg.text = String.valueOf(enabled);
+        return msg;
+    }
+    
+    public static ControlMessage performAcsAction(int action) {
+        ControlMessage msg = new ControlMessage();
+        msg.type = TYPE_PERFORM_ACS_ACTION;
+        msg.action = action;
         return msg;
     }
 

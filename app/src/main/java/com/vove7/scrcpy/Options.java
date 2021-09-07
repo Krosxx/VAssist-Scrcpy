@@ -8,6 +8,8 @@ public class Options {
 
     private int socketPort = 9999;
 
+    private String pkg;
+
     private boolean exitOnClose = false;
 
     public boolean isExitOnClose() {
@@ -40,5 +42,13 @@ public class Options {
 
     public void setSocketPort(int socketPort) {
         this.socketPort = socketPort;
+    }
+
+    public String getPkg() {
+        return pkg;
+    }
+
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
     }
 }

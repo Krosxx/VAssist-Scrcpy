@@ -11,7 +11,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import cn.vove7.scrcpy.BuildConfig;
+
 public final class Workarounds {
+
+    public static Context SysContext;
+    public static Application APP;
+
     private Workarounds() {
         // not instantiable
     }
@@ -30,7 +36,7 @@ public final class Workarounds {
     }
 
     @SuppressLint("PrivateApi,DiscouragedPrivateApi")
-    public static void fillAppInfo() {
+    public static void fillAppInfo(String pkg) {
         try {
             // ActivityThread activityThread = new ActivityThread();
             Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
@@ -50,7 +56,7 @@ public final class Workarounds {
             Object appBindData = appBindDataConstructor.newInstance();
 
             ApplicationInfo applicationInfo = new ApplicationInfo();
-            applicationInfo.packageName = "com.genymobile.scrcpy";
+            applicationInfo.packageName = pkg;
 
             // appBindData.appInfo = applicationInfo;
             Field appInfoField = appBindDataClass.getDeclaredField("appInfo");
@@ -64,15 +70,18 @@ public final class Workarounds {
 
             // Context ctx = activityThread.getSystemContext();
             Method getSystemContextMethod = activityThreadClass.getDeclaredMethod("getSystemContext");
-            Context ctx = (Context) getSystemContextMethod.invoke(activityThread);
+            SysContext = (Context) getSystemContextMethod.invoke(activityThread);
 
-            Application app = Instrumentation.newApplication(Application.class, ctx);
+            APP = Instrumentation.newApplication(Application.class, SysContext);
+
+            Ln.i("SysContext: " + SysContext + " app:" + APP);
 
             // activityThread.mInitialApplication = app;
             Field mInitialApplicationField = activityThreadClass.getDeclaredField("mInitialApplication");
             mInitialApplicationField.setAccessible(true);
-            mInitialApplicationField.set(activityThread, app);
+            mInitialApplicationField.set(activityThread, APP);
         } catch (Throwable throwable) {
+            throwable.printStackTrace();
             // this is a workaround, so failing is not an error
             Ln.d("Could not fill app info: " + throwable.getMessage());
         }

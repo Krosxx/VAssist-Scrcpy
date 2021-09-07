@@ -1,14 +1,14 @@
 package com.vove7.scrcpy.wrappers;
 
-import com.vove7.scrcpy.Ln;
-
 import android.os.IInterface;
 import android.view.IRotationWatcher;
+
+import com.vove7.scrcpy.Ln;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public final class WindowManager {
+public final class WindowManager extends IManager {
     private final IInterface manager;
     private Method getRotationMethod;
     private Method freezeRotationMethod;
@@ -16,6 +16,7 @@ public final class WindowManager {
     private Method thawRotationMethod;
 
     public WindowManager(IInterface manager) {
+        super(manager);
         this.manager = manager;
     }
 
@@ -106,6 +107,16 @@ public final class WindowManager {
             }
         } catch (Exception e) {
             throw new AssertionError(e);
+        }
+    }
+
+    public boolean showGlobalActions() {
+        try {
+            getMethod("showGlobalActions").invoke(manager);
+            return true;
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -8,31 +8,23 @@ import android.view.InputEvent;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 
+import com.vove7.scrcpy.wrappers.SystemActionPerformer;
 import com.vove7.scrcpy.wrappers.ClipboardManager;
 import com.vove7.scrcpy.wrappers.ContentProvider;
 import com.vove7.scrcpy.wrappers.InputManager;
-import com.vove7.scrcpy.wrappers.ServiceManager;
+import com.vove7.scrcpy.wrappers.ServiceManagerWrapper;
 import com.vove7.scrcpy.wrappers.SurfaceControl;
 import com.vove7.scrcpy.wrappers.WindowManager;
 
-import static java.lang.Thread.sleep;
-
 public final class Device implements DeviceOp {
 
-    public static final int POWER_MODE_OFF = SurfaceControl.POWER_MODE_OFF;
-    public static final int POWER_MODE_NORMAL = SurfaceControl.POWER_MODE_NORMAL;
-
-    public static final int LOCK_VIDEO_ORIENTATION_UNLOCKED = -1;
-    public static final int LOCK_VIDEO_ORIENTATION_INITIAL = -2;
-
-    private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
+    public static final ServiceManagerWrapper SERVICE_MANAGER = new ServiceManagerWrapper();
 
     /**
      * The surface flinger layer stack associated with this logical display
      */
     private final int layerStack;
 
-    private final boolean supportsInputEvents;
 
     private int displayId = 0;
 
@@ -52,10 +44,18 @@ public final class Device implements DeviceOp {
         }
 
         // main display or any display on Android >= Q
-        supportsInputEvents = displayId == 0 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
-        if (!supportsInputEvents) {
+        if (!supportsInputEvents()) {
             Ln.w("Input events are not supported for secondary displays before Android 10");
         }
+    }
+
+    private static SystemActionPerformer systemActionPerformer;
+
+    public static boolean performAcsAction(int action) {
+        if (systemActionPerformer == null) {
+            systemActionPerformer = new SystemActionPerformer();
+        }
+        return systemActionPerformer.performSystemAction(action);
     }
 
     public void setDisplayId(int displayId) {
@@ -75,7 +75,7 @@ public final class Device implements DeviceOp {
     }
 
     public boolean supportsInputEvents() {
-        return supportsInputEvents;
+        return supportsInputEvents(displayId);
     }
 
     public static boolean injectEvent(InputEvent inputEvent, int displayId) {

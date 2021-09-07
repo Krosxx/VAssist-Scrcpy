@@ -63,6 +63,7 @@ public class Controller implements Closeable {
             try {
                 handleEvent();
             } catch (Exception e) {
+                send(DeviceMessage.buildErr(e));
                 Ln.e("control err: " + e.toString());
                 break;
             }
@@ -126,7 +127,12 @@ public class Controller implements Closeable {
             case ControlMessage.TYPE_SIMPLE_GESTURE:
                 playSimpleGesture(msg.getGesturePaths(), msg.getAction());
                 break;
+            case ControlMessage.TYPE_PERFORM_ACS_ACTION:
+                boolean ret = Device.performAcsAction(msg.getAction());
+                Ln.d("performAcsAction " + msg.getAction() + " ret: " + ret);
+                break;
             default:
+                Ln.e("unknown msg type: " + msg.getType() + "\n" + msg.toString());
                 // do nothing
         }
     }

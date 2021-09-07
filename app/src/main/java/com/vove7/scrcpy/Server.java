@@ -1,6 +1,7 @@
 package com.vove7.scrcpy;
 
 import android.os.Build;
+import android.os.Looper;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -17,7 +18,10 @@ public final class Server {
 
     private static void scrcpy(Options options) throws IOException {
         RUNNING = true;
-        Ln.i("Device: " + Build.MANUFACTURER + " " + Build.MODEL + " (Android " + Build.VERSION.RELEASE + ")");
+        Ln.i("Device: " + Build.MANUFACTURER + " " + Build.MODEL + " (Android " + Build.VERSION.RELEASE + ")" + "\n" +
+                "SysContext: " + Workarounds.SysContext + "\n" +
+                "App:" + Workarounds.APP + "\n" +
+                "pkg: " + options.getPkg());
         final Device device = new Device();
 
         boolean loop = !options.isExitOnClose() && options.getConnectType().name().contains("Server");
@@ -58,7 +62,10 @@ public final class Server {
             options.setSocketPort(port);
         }
         if (args.length > 3) {
-            boolean eoc = Boolean.parseBoolean(args[3]);
+            options.setPkg(args[3]);
+        }
+        if (args.length > 4) {
+            boolean eoc = Boolean.parseBoolean(args[4]);
             options.setExitOnClose(eoc);
         }
 
@@ -71,6 +78,8 @@ public final class Server {
         Options options = createOptions(args);
 
         Ln.initLogLevel(options.getLogLevel());
+        Workarounds.prepareMainLooper();
+        Workarounds.fillAppInfo(options.getPkg());
 
         scrcpy(options);
     }

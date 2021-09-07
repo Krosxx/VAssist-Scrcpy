@@ -1,18 +1,15 @@
 package com.vove7.scrcpy.wrappers;
 
-import android.annotation.SuppressLint;
 import android.os.IBinder;
 import android.os.IInterface;
+import android.os.ServiceManager;
 
 import java.lang.reflect.Method;
 
-@SuppressLint("PrivateApi,DiscouragedPrivateApi")
-public final class ServiceManager {
+public final class ServiceManagerWrapper {
 
     public static final String PACKAGE_NAME = "com.android.shell";
     public static final int USER_ID = 0;
-
-    private final Method getServiceMethod;
 
     private WindowManager windowManager;
     private DisplayManager displayManager;
@@ -22,17 +19,9 @@ public final class ServiceManager {
     private ClipboardManager clipboardManager;
     private ActivityManager activityManager;
 
-    public ServiceManager() {
-        try {
-            getServiceMethod = Class.forName("android.os.ServiceManager").getDeclaredMethod("getService", String.class);
-        } catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
     private IInterface getService(String service, String type) {
         try {
-            IBinder binder = (IBinder) getServiceMethod.invoke(null, service);
+            IBinder binder = ServiceManager.getService(service);
             Method asInterfaceMethod = Class.forName(type + "$Stub").getMethod("asInterface", IBinder.class);
             return (IInterface) asInterfaceMethod.invoke(null, binder);
         } catch (Exception e) {
