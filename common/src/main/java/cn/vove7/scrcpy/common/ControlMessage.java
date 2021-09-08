@@ -28,6 +28,7 @@ public final class ControlMessage {
     public static final int TYPE_SET_POWER_SAVE_MODE = 12;
     public static final int TYPE_SIMPLE_GESTURE = 13;
     public static final int TYPE_PERFORM_ACS_ACTION = 14;
+    public static final int TYPE_EXIT = 15;
 
     private int type;
     private String text;
@@ -80,6 +81,12 @@ public final class ControlMessage {
         msg.pressure = pressure;
         msg.position = position;
         msg.buttons = buttons;
+        return msg;
+    }
+
+    public static ControlMessage exit() {
+        ControlMessage msg = new ControlMessage();
+        msg.type = TYPE_EXIT;
         return msg;
     }
 
@@ -216,4 +223,5 @@ public final class ControlMessage {
         out.write(cd + "\n");
         out.flush();
     }
+
 }

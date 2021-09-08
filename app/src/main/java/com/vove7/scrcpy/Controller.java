@@ -131,6 +131,9 @@ public class Controller implements Closeable {
                 boolean ret = Device.performAcsAction(msg.getAction());
                 Ln.d("performAcsAction " + msg.getAction() + " ret: " + ret);
                 break;
+            case ControlMessage.TYPE_EXIT:
+                System.exit(0);
+                break;
             default:
                 Ln.e("unknown msg type: " + msg.getType() + "\n" + msg.toString());
                 // do nothing
